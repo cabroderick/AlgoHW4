@@ -19,18 +19,11 @@ row such that the rows can be ordered to form an upper triangular matrix.
 using namespace std;
 #include <malloc.h>
 #include <vector>
+#include <iostream>
 vector< vector<int> > Elimination (vector<vector<int> > A, vector<int> b) {
 	int n = A.size(); // The dimensions of the matrix
-	vector<vector<int>> augmented(n, vector<int>(n + 1));
-	for (int i = 0; i < n; i++) { // Goes up to size rows
-		for (int k = 0; k < n + 1; k++) { // Goes up to size + 1 cols
-			if (k < n) { // If not currently on augmented column
-				augmented[i][k] = A[i][k];
-			}
-			else {
-				augmented[i][k] = b[i];
-			}
-		}
+	for (int i = 0; i < A.size(); i++) {
+		A.at(i).push_back(b.at(i));
 	}
 	for (int i = 0; i < n - 1; i++) {
 		int pivotrow = i;
@@ -50,11 +43,17 @@ vector< vector<int> > Elimination (vector<vector<int> > A, vector<int> b) {
 			}
 		}
 	}
-	return augmented;
+	return A;
 }
 
 int main() {
 	vector<vector<int>> A = { {1, 1, -1}, {0, 1, 3}, {-1, 0, 2} };	
 	vector<int> b = { 9, 3, 2 };
-	Elimination(A, b);
+	vector<vector<int>> B = Elimination(A, b);
+	for (int i = 0; i < A.size(); i++) {
+		for (int k = 0; k < A[i].size(); k++) {
+			cout << B[i][k] << " "; // Prints the matrix
+		}
+		cout << endl;
+	}
 }
