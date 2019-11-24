@@ -25,7 +25,7 @@ vector< vector<double> > Elimination (vector<vector<double> > A, vector<double> 
 	for (int i = 0; i < n; i++) {
 		A.at(i).push_back(b.at(i));
 	}
-	for (int i = 0; i < n - 1; i++) {
+	for (int i = 0; i < n - 1; i++) { // Forwards elimination
 		bool solved = false;
 		int count = 0;
 		for (int j = n - 1; j > 0; j--) {
@@ -58,9 +58,46 @@ vector< vector<double> > Elimination (vector<vector<double> > A, vector<double> 
 				}
 				cout << endl;
 			}
-			cout << endl;
+			cout << endl; // prints matrix
 		}
 	}
+	
+	for (int i = n - 1; i > 0; i--) { // Backwards elimination
+		double diagonal = A[i][i];
+		if (diagonal != 0) {
+			for (int j = 0; j < i; j++) {
+				double ratio = A[j][i] / A[i][i];
+				A[j][i] = A[j][i] - ratio * A[i][i];
+				A[j][n] = A[j][n] - ratio * A[i][n];
+			}
+		}
+	}
+	
+	for (int j = 0; j < n; j++) {
+		for (int k = 0; k < n + 1; k++) {
+			cout << A[j][k] << " ";
+		}
+		cout << endl; // prints matrix
+	}
+	cout << endl;
+	
+	for (int i = 0; i < n; i++) {
+		double diagonal = A[i][i];
+		if (diagonal != 0) {
+			for (int j = 0; j < n + 1; j++) {
+				if (A[i][j] != 0) A[i][j] /= diagonal;
+			}
+		}
+	}
+
+	for (int j = 0; j < n; j++) {
+		for (int k = 0; k < n + 1; k++) {
+			cout << A[j][k] << " ";
+		}
+		cout << endl; // prints matrix
+	}
+	cout << endl;
+
 	return A;
 }
 
