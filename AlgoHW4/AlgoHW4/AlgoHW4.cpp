@@ -13,8 +13,7 @@ row such that the rows can be ordered to form an upper triangular matrix.
 
 // Applies Guass-Jordan elimination on a matrix
 // A: The matrix of coefficients
-// B: The system's right-hand side values
-// n: The dimensions of array A
+// b: The system's right-hand side values
 // Returns the solved matrix
 using namespace std;
 #include <malloc.h>
@@ -52,13 +51,6 @@ vector< vector<double> > Elimination (vector<vector<double> > A, vector<double> 
 					A[j][k] = A[j][k] - (double)A[i][k] * temp;
 				}
 			}
-			for (int j = 0; j < n; j++) {
-				for (int k = 0; k < n + 1; k++) {
-					cout << A[j][k] << " ";
-				}
-				cout << endl;
-			}
-			cout << endl; // prints matrix
 		}
 	}
 	
@@ -72,15 +64,7 @@ vector< vector<double> > Elimination (vector<vector<double> > A, vector<double> 
 			}
 		}
 	}
-	
-	for (int j = 0; j < n; j++) {
-		for (int k = 0; k < n + 1; k++) {
-			cout << A[j][k] << " ";
-		}
-		cout << endl; // prints matrix
-	}
-	cout << endl;
-	
+
 	for (int i = 0; i < n; i++) {
 		double diagonal = A[i][i];
 		if (diagonal != 0) {
@@ -89,24 +73,42 @@ vector< vector<double> > Elimination (vector<vector<double> > A, vector<double> 
 			}
 		}
 	}
-
-	for (int j = 0; j < n; j++) {
-		for (int k = 0; k < n + 1; k++) {
-			cout << A[j][k] << " ";
-		}
-		cout << endl; // prints matrix
-	}
-	cout << endl;
-
 	return A;
 }
 
+// Performs guass-jordan elimination on a given matrix and prints the result
+// A: The matrix of coefficients
+// b: The system's right-hand side values
+void elimAndPrint(vector<vector<double>> A, vector<double> b) {
+	int n = A.size();
+	cout << "Original matrix:" << endl;
+	for (int j = 0; j < n; j++) { // print original matrix
+		for (int k = 0; k < n + 1; k++) {
+			if (k < n) {
+				cout << A[j][k] << " ";
+			}
+			else cout << b[j] << " ";
+			
+		}
+		cout << endl;
+	}
+	cout << endl;
+	vector<vector<double>> result = Elimination(A, b);
+	cout << "Solved matrix:" << endl;
+	for (int j = 0; j < n; j++) { // print solved matrix
+		for (int k = 0; k < n + 1; k++) {
+			cout << result[j][k] << " ";
+		}
+		cout << endl;
+	}
+}
+
 int main() {
-	vector<vector<double>> A = { {1, 1, -1}, {0, 1, 3}, {-1, 0, 2} };	
-	vector<double> b = { 9, 3, 2 };
+	vector<vector<double>> A1 = { {1, 1, -1}, {0, 1, 3}, {-1, 0, 2} };	
+	vector<double> b1 = { 9, 3, 2 };
 	vector<vector<double>> A2 = { {1, 1, 1}, {1, 1, 2}, {2, 2, 3} };
 	vector<double> b2 = { 6, 9, 15 };
 	vector<vector<double>> A3 = { {1,1,1,1,1,1,1,1}, {1,2,1,1,1,1,2,1}, {1,1,3,1,1,3,1,1}, {1,1,1,4,4,1,1,1}, {11,1,1,1,1,1,1,1}, {1,1,1,1,-1,-1,-1,-1}, {1,2,3,4,5,6,7,8}, {1,-1,1,-1,1,-1,1,-1} };
 	vector<double> b3 = { 0,0,0,0,20,34,-51,-6 };
-	vector<vector<double>> B = Elimination(A3, b3);
+	elimAndPrint(A3, b3);
 }
