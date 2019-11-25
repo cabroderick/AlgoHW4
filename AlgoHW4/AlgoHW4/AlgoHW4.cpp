@@ -103,6 +103,105 @@ void elimAndPrint(vector<vector<double>> A, vector<double> b) {
 	}
 }
 
+vector<vector<int>> board = { {79, 71, 18, 20, 34, 51, 93, 65}, {73, 38, 24, 49, 18, 6, 40, 74}, {31, 5, 63, 10, 32, 40, 14, 13}, {13, 78, 48, 19, 78, 11, 90, 94}, {22, 93, 68, 11, 56, 63, 49, 35}, {85, 52, 27, 5, 94, 91, 82, 62}, {46, 23, 99, 77, 10, 42, 1, 72}, {89, 70, 73, 83, 90, 22, 44, 92} };
+vector<vector<int>> vals = { {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}  ,{0,0,0,0,0,0,0,0},  {0,0,0,0,0,0,0,0} }; // Matrix of calculated values
+
+// Calculates the value at a given row and column
+// r: The row
+// c: The column
+int calcVal(int r, int c) {
+		if (r == 7) vals[r][c] = board[r][c]; // base case for top row
+		else if (vals[r][c] == 0) { // not yet calculated
+			int up = 0;
+			int right = 0;
+			int left = 0;
+			switch (c) { // checking for if on left/right
+			case(0): // left wall
+				up = calcVal(r + 1, c);
+				right = calcVal(r + 1, c + 1);
+				vals[r][c] = board[r][c] + fmax(up, right);
+				break;
+			case(7): // right wall
+				up = calcVal(r + 1, c);
+				left = calcVal(r + 1, c - 1);
+				vals[r][c] = board[r][c] + fmax(up, left);
+				break;
+			default: // otherwise
+				up = calcVal(r + 1, c);
+				left = calcVal(r + 1, c - 1);
+				right = calcVal(r + 1, c + 1);
+				vals[r][c] = board[r][c] + fmax(fmax(up, left), fmax(up, right));
+				break;
+			}
+		}
+		return vals[r][c];
+}
+
+// Calculates the optimal path for a starting node
+// r: The starting row
+// c: The starting column
+vector<int> calcPath(int r, int c) {
+	vector<int> output = { board[r][c] };
+	if (r == 7) { // base case
+		return output;
+	}
+	else {
+		int up = 0;
+		int right = 0;
+		int left = 0;
+		vector<int> path;
+		switch (c) { // checking for if on left/right
+		case(0): // left wall
+			up = calcVal(r + 1, c);
+			right = calcVal(r + 1, c + 1);
+			if (up > right) {
+				path = calcPath(r + 1, c);
+			}
+			else path = calcPath(r + 1, c + 1);
+			break;
+		case(7): // right wall
+			up = calcVal(r + 1, c);
+			left = calcVal(r + 1, c - 1);
+			if (up > left) {
+				path = calcPath(r + 1, c);
+			}
+			else path = calcPath(r + 1, c - 1);
+			break;
+		default: // otherwise
+			up = calcVal(r + 1, c);
+			left = calcVal(r + 1, c - 1);
+			right = calcVal(r + 1, c + 1);
+			int max = fmax(fmax(up, left), fmax(up, right));
+			if (max == up) path = calcPath(r + 1, c);
+			else if (max == left) path = calcPath(r + 1, c - 1);
+			else if (max == right) path = calcPath(r + 1, c + 1);
+			break;
+		}
+		output.insert(output.begin(), path.begin(), path.end());
+		return output;
+	}
+}
+
+// Calculates the path for question 4
+void pathCalculator() {
+	vector<vector<int>> paths = { {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}  ,{0,0,0,0,0,0,0,0},  {0,0,0,0,0,0,0,0} };// the paths for each vault index
+	vector<int> totals = { 0,0,0,0,0,0,0,0 };
+	for (int i = 0; i < 8; i++) { // Calculate path for each starting node
+
+		totals[i] = calcVal(0, i);
+		paths[i] = calcPath(0, i);
+	}
+	cout << "Starting square: Row 1 vault 7" << endl;
+	cout << "Bilbo's path: ";
+	for (int i = 7; i >= 0; i--) {
+		cout << paths[6][i] << " ";
+	}
+	cout << endl;
+	cout << "Total gems collected: " << totals[6] << endl;
+	cout << "Arkenstone vault: Row 8 vault 5";
+}
+
+
 int main() {
 	vector<vector<double>> A1 = { {1, 1, -1}, {0, 1, 3}, {-1, 0, 2} };	
 	vector<double> b1 = { 9, 3, 2 };
@@ -111,4 +210,6 @@ int main() {
 	vector<vector<double>> A3 = { {1,1,1,1,1,1,1,1}, {1,2,1,1,1,1,2,1}, {1,1,3,1,1,3,1,1}, {1,1,1,4,4,1,1,1}, {11,1,1,1,1,1,1,1}, {1,1,1,1,-1,-1,-1,-1}, {1,2,3,4,5,6,7,8}, {1,-1,1,-1,1,-1,1,-1} };
 	vector<double> b3 = { 0,0,0,0,20,34,-51,-6 };
 	elimAndPrint(A3, b3);
+	cout << endl;
+	pathCalculator();
 }
